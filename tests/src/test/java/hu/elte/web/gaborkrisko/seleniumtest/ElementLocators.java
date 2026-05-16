@@ -19,9 +19,19 @@ public class ElementLocators {
     private final By accountNameInputBy = By.id("account-name");
     private final By accountTypeBy = By.id("account-type");
     private final By saveAccountBy = By.id("save-account-btn");
-    private final By initialBalanceInput = By.id("initial-balance");
+    private final By initialBalanceInputBy = By.id("initial-balance");
     private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
     private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
+    
+    private final Map<Boolean, By> accountStatusRadioLabelsBy = Map.of(
+        true, By.xpath("//*[@id='account-status-field']//*[@id='status-radio-group']//label[@for='status-active']"),
+        false, By.xpath("//*[@id='account-status-field']//*[@id='status-radio-group']//label[@for='status-inactive']")
+    );
+
+    private final Map<Boolean, String> accountStatusRadioInputsXPathString = Map.of(
+        true, "//*[@id='account-status-field']//*[@id='status-radio-group']//input[@type='radio' and @value='active']",
+        false, "//*[@id='account-status-field']//*[@id='status-radio-group']//input[@type='radio' and @value='inactive']"
+    );
     
     private final Map<AccountType, By> accountTypeSelectOptions = Map.of(
         AccountType.SAVINGS_ACCOUNT,  By.xpath("//*[@data-radix-select-viewport]//*[@data-radix-collection-item and contains(., 'Savings Account')]"),
