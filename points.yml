@@ -151,7 +151,7 @@ advanced:
     link: "https://www.selenium.dev/documentation/webdriver/actions_api/mouse/"
 
   drag_and_drop:             # 8 pts | once
-    done: false
+    done: true
     description: "Drag and drop an element to another location"
     link: "https://www.selenium.dev/documentation/webdriver/actions_api/mouse/"
 

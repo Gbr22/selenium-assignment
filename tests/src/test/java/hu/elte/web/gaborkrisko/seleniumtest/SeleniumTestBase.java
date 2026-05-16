@@ -100,9 +100,39 @@ public class SeleniumTestBase {
         );
     }
 
+    protected List<WebElement> getElementsByXPath(String xpath) {
+        final var result = javascriptExecutor.executeScript(
+            """
+            {
+                const result = (%s);
+                const nodes = [];
+                let node = null;
+                while (node = result?.iterateNext()) {
+                    nodes.push(node);
+                }
+                return nodes;
+            }
+            """
+            .formatted(getEvaluateXPathJsCode(xpath))
+        );
+        if (result instanceof List<?> list) {
+            return list.stream()
+                .<WebElement>map(e->(WebElement)e)
+                .toList();
+        }
+        throw new IllegalStateException("Expected List<WebElement>");
+    }
+
     protected void clickElementByXPath(String xpath) {
         javascriptExecutor.executeScript(
             "(%s)?.click()"
+            .formatted(getXPathFirstElementJsCode(xpath))
+        );
+    }
+
+    protected void scrollElementIntoView(String xpath) {
+        javascriptExecutor.executeScript(
+            "(%s)?.scrollIntoView()"
             .formatted(getXPathFirstElementJsCode(xpath))
         );
     }

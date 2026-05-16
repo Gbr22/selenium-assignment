@@ -8,57 +8,63 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class BankAccountTest extends SeleniumTestBase {
-    private final String ACCOUNT_CREATION_SUCCESS_MESSAGE = "Account created successfully!";
+    private final static String ACCOUNT_CREATION_SUCCESS_MESSAGE = "Account created successfully!";
 
-    private String formatBalance(long balanceCents) {
+    private static String formatBalance(long balanceCents) {
         long whole = balanceCents / 100;
         long cents = balanceCents - (whole * 100);
         String centsString = cents < 10 ? "0%d".formatted(cents) : "%d".formatted(cents);
         return "%d.%s".formatted(whole, centsString);
     }
 
-    private void fillAccountCreationForm(AccountCreationParameters parameters) {
-        final var addAccountEl = waitAndReturnElement(locators.getAddAccountBy());
+    private static void fillAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
+        final var locators = test.locators;
+        final var addAccountEl = test.waitAndReturnElement(locators.getAddAccountBy());
         addAccountEl.sendKeys(Keys.ENTER);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountFormBy()));
+        test.wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountFormBy()));
         
-        final var accountNameEl = waitAndReturnElement(locators.getAccountNameInputBy());
+        final var accountNameEl = test.waitAndReturnElement(locators.getAccountNameInputBy());
         accountNameEl.sendKeys(parameters.getAccountName());
         
-        final var accountTypeBy = waitAndReturnElement(locators.getAccountTypeBy());
+        final var accountTypeBy = test.waitAndReturnElement(locators.getAccountTypeBy());
         accountTypeBy.click();
-        final var option = waitAndReturnElement(locators.getAccountTypeSelectOptions().get(parameters.getAccountType()));
+        final var option = test.waitAndReturnElement(locators.getAccountTypeSelectOptions().get(parameters.getAccountType()));
         option.click();
 
-        final var initialBalanceEl = waitAndReturnElement(locators.getInitialBalanceInputBy());
+        final var initialBalanceEl = test.waitAndReturnElement(locators.getInitialBalanceInputBy());
         initialBalanceEl.sendKeys(formatBalance(parameters.getBalanceCents()));
 
         final var isActiveRadioLabelToSelectBy = locators.getAccountStatusRadioLabelsBy().get(parameters.getIsActive());
         final var isActiveRadioInputToSelectXPath = locators.getAccountStatusRadioHiddenInputsXPathString().get(parameters.getIsActive());
-        final var isActiveRadioToSelectEl = waitAndReturnElement(isActiveRadioLabelToSelectBy);
+        final var isActiveRadioToSelectEl = test.waitAndReturnElement(isActiveRadioLabelToSelectBy);
         isActiveRadioToSelectEl.click();
-        final var isHiddenCheckboxInputSelected = getCheckedStateByXPath(isActiveRadioInputToSelectXPath);
+        final var isHiddenCheckboxInputSelected = test.getCheckedStateByXPath(isActiveRadioInputToSelectXPath);
         assertTrue(isHiddenCheckboxInputSelected);
 
-        final var enableOverdraftProtectionEl = waitAndReturnElement(locators.getEnableOverdraftProtectionCheckbox());
+        final var enableOverdraftProtectionEl = test.waitAndReturnElement(locators.getEnableOverdraftProtectionCheckbox());
         if (parameters.getIsOverdraftProtectionEnabled()) {
             enableOverdraftProtectionEl.click();
         }
         assertEquals(parameters.getIsOverdraftProtectionEnabled(), Boolean.parseBoolean(enableOverdraftProtectionEl.getAttribute("aria-checked")));
-        assertEquals(parameters.getIsOverdraftProtectionEnabled(), getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
+        assertEquals(parameters.getIsOverdraftProtectionEnabled(), test.getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
     }
 
-    private void submitAccountCreationForm(AccountCreationParameters parameters) {
-        fillAccountCreationForm(parameters);
-        waitAndReturnElement(locators.getSaveAccountBy()).click();
-        assertTrue(ToastTest.getToastText(this).contains(ACCOUNT_CREATION_SUCCESS_MESSAGE), "Expected the toast message text to contain the account creation success message.");
+    private static void submitAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
+        BankAccountTest.fillAccountCreationForm(test, parameters);
+        test.waitAndReturnElement(test.locators.getSaveAccountBy()).click();
+        assertTrue(ToastTest.getToastText(test).contains(ACCOUNT_CREATION_SUCCESS_MESSAGE), "Expected the toast message text to contain the account creation success message.");
+    }
+
+    public static void createAccount(SeleniumTestBase test, AccountCreationParameters parameters) {
+        test.waitAndReturnElement(test.locators.getDashboardNavigationBy()).click();
+        BankAccountTest.submitAccountCreationForm(test, parameters);
     }
 
     @Test
     public void createAccountTest() {
         AuthTest.loginAdmin(this);
         waitAndReturnElement(locators.getDashboardNavigationBy()).click();
-        submitAccountCreationForm(AccountCreationParameters.builder()
+        BankAccountTest.submitAccountCreationForm(this, AccountCreationParameters.builder()
             .accountName("via opener button")
             .accountType(AccountType.CREDIT_CARD)
             .balanceCents(1234L)
@@ -71,7 +77,7 @@ public class BankAccountTest extends SeleniumTestBase {
     public void openAccountCreationDialogWithKeyboardTest() {
         AuthTest.loginAdmin(this);
         dispatchKeyboardEvent("keydown", "N");
-        submitAccountCreationForm(AccountCreationParameters.builder()
+        BankAccountTest.submitAccountCreationForm(this, AccountCreationParameters.builder()
             .accountName("via keyboard")
             .accountType(AccountType.SAVINGS_ACCOUNT)
             .balanceCents(1234L)

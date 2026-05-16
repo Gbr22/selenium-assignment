@@ -23,6 +23,8 @@ public class ElementLocators {
     private final By dashboardNavigationBy = By.id("nav-dashboard");
     private final By accountsNavigationBy = By.id("nav-accounts");
     private final By transactionsNavigationBy = By.id("nav-transactions");
+    private final String pinnedAccountsXPathString = "//*[@id='pinned-accounts-drop-zone']";
+    private final String pinnedAccountNameXPathString = "//*[@id='pinned-accounts-drop-zone']//*[@data-account-id]";
     private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
     private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
     private final By enableOverdraftProtectionCheckbox = By.xpath("//*[@id='account-form']//*[@id='account-form-fields']//*[@data-testid='overdraft-checkbox' and @role='checkbox']");
