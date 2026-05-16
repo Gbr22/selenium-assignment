@@ -1,5 +1,6 @@
 package hu.elte.web.gaborkrisko.seleniumtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ public class BankAccountTest extends SeleniumTestBase {
         return "%d.%s".formatted(whole, centsString);
     }
 
-    private void createAccount(String accountName, AccountType accountType, long balanceCents, boolean isActive) {
+    private void createAccount(String accountName, AccountType accountType, long balanceCents, boolean isActive, boolean enableOverdraftProtection) {
         AuthTest.loginAdmin(this);
         final var addAccountEl = waitAndReturnElement(locators.getAddAccountBy());
         addAccountEl.sendKeys(Keys.ENTER);
@@ -34,14 +35,18 @@ public class BankAccountTest extends SeleniumTestBase {
         initialBalanceEl.sendKeys(formatBalance(balanceCents));
 
         final var isActiveRadioLabelToSelectBy = locators.getAccountStatusRadioLabelsBy().get(isActive);
-        final var isActiveRadioInputToSelectXPath = locators.getAccountStatusRadioInputsXPathString().get(isActive);
+        final var isActiveRadioInputToSelectXPath = locators.getAccountStatusRadioHiddenInputsXPathString().get(isActive);
         final var isActiveRadioToSelectEl = waitAndReturnElement(isActiveRadioLabelToSelectBy);
         isActiveRadioToSelectEl.click();
-        final var isHiddenCheckboxInputSelected = (boolean) javascriptExecutor.executeScript(
-            "return Boolean(document.evaluate(`%s`, document.documentElement, null, XPathResult.ANY_TYPE, null).iterateNext().checked)"
-            .formatted(isActiveRadioInputToSelectXPath)
-        );
+        final var isHiddenCheckboxInputSelected = getCheckedStateByXPath(isActiveRadioInputToSelectXPath);
         assertTrue(isHiddenCheckboxInputSelected);
+
+        final var enableOverdraftProtectionEl = waitAndReturnElement(locators.getEnableOverdraftProtectionCheckbox());
+        if (enableOverdraftProtection) {
+            enableOverdraftProtectionEl.click();
+        }
+        assertEquals(enableOverdraftProtection, Boolean.parseBoolean(enableOverdraftProtectionEl.getAttribute("aria-checked")));
+        assertEquals(enableOverdraftProtection, getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
         
         final var saveAccount = waitAndReturnElement(locators.getSaveAccountBy());
         saveAccount.click();
@@ -51,6 +56,6 @@ public class BankAccountTest extends SeleniumTestBase {
 
     @Test
     public void createAccountTest() {
-        createAccount("test", AccountType.CREDIT_CARD, 1234, true);
+        createAccount("test", AccountType.CREDIT_CARD, 1234, false, true);
     }
 }

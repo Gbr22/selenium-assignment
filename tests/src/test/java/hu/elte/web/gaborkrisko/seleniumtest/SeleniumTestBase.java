@@ -19,6 +19,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.google.gson.Gson;
+
 @TestInstance(Lifecycle.PER_CLASS)
 public class SeleniumTestBase {
     protected WebDriver driver;
@@ -41,6 +43,14 @@ public class SeleniumTestBase {
         
     }
 
+    @BeforeEach
+    public void clearStorage() {
+        driver.get(config.getBaseURL());
+        javascriptExecutor.executeScript("window.localStorage.clear()");
+        javascriptExecutor.executeScript("window.sessionStorage.clear()");
+        driver.get(config.getBaseURL());
+    }
+
     @AfterAll
     public void close() {
         if (this.driver != null) {
@@ -58,11 +68,36 @@ public class SeleniumTestBase {
         return this.driver.findElements(locator);
     }
 
-    @BeforeEach
-    public void clearStorage() {
-        driver.get(config.getBaseURL());
-        javascriptExecutor.executeScript("window.localStorage.clear()");
-        javascriptExecutor.executeScript("window.sessionStorage.clear()");
-        driver.get(config.getBaseURL());
+    private String asJsonString(String input) {
+        Gson gson = new Gson();
+        return gson.toJson(input, String.class);
+    }
+
+    private String getEvaluateXPathJsCode(String xpath) {
+        return "document.evaluate(%s, document.documentElement, null, XPathResult.ANY_TYPE, null)".formatted(asJsonString(xpath));
+    }
+    private String getXPathFirstElementJsCode(String xpath) {
+        return "(%s)?.iterateNext()".formatted(getEvaluateXPathJsCode(xpath));
+    }
+
+    protected boolean getCheckedStateByXPath(String xpath) {
+        return (boolean) javascriptExecutor.executeScript(
+            "return Boolean((%s)?.checked)"
+            .formatted(getXPathFirstElementJsCode(xpath))
+        );
+    }
+
+    protected void clickElementByXPath(String xpath) {
+        javascriptExecutor.executeScript(
+            "(%s)?.click()"
+            .formatted(getXPathFirstElementJsCode(xpath))
+        );
+    }
+
+    protected void dispatchKeyboardEvent(String eventType, String key) {
+        javascriptExecutor.executeScript(
+            "window.dispatchEvent(new KeyboardEvent(%s, {key: %s}))"
+            .formatted(asJsonString(eventType), asJsonString(key))
+        );
     }
 }

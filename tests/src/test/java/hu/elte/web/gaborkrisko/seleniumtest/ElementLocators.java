@@ -22,13 +22,15 @@ public class ElementLocators {
     private final By initialBalanceInputBy = By.id("initial-balance");
     private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
     private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
+    private final By enableOverdraftProtectionCheckbox = By.xpath("//*[@id='account-form']//*[@id='account-form-fields']//*[@data-testid='overdraft-checkbox' and @role='checkbox']");
+    private final String enableOverdraftProtectionHiddenInputXPathString = "//*[@id='account-form']//*[@id='account-form-fields']//input[@type='checkbox' and @name='enableOverdraft']";
     
     private final Map<Boolean, By> accountStatusRadioLabelsBy = Map.of(
         true, By.xpath("//*[@id='account-status-field']//*[@id='status-radio-group']//label[@for='status-active']"),
         false, By.xpath("//*[@id='account-status-field']//*[@id='status-radio-group']//label[@for='status-inactive']")
     );
 
-    private final Map<Boolean, String> accountStatusRadioInputsXPathString = Map.of(
+    private final Map<Boolean, String> accountStatusRadioHiddenInputsXPathString = Map.of(
         true, "//*[@id='account-status-field']//*[@id='status-radio-group']//input[@type='radio' and @value='active']",
         false, "//*[@id='account-status-field']//*[@id='status-radio-group']//input[@type='radio' and @value='inactive']"
     );
