@@ -1,5 +1,7 @@
 package hu.elte.web.gaborkrisko.seleniumtest;
 
+import java.util.Map;
+
 import org.openqa.selenium.By;
 
 import lombok.Getter;
@@ -11,4 +13,19 @@ public class ElementLocators {
     private final By loginFormBy = By.id("bank-login-content");
     private final By usernameDisplayBy = By.id("username-display");
     private final By loginSubmitBy = By.id("login-btn");
+    private final By logoutBy = By.id("logout-btn");
+    private final By addAccountBy = By.id("add-account-link");
+    private final By accountFormBy = By.id("account-form");
+    private final By accountNameInputBy = By.id("account-name");
+    private final By accountTypeBy = By.id("account-type");
+    private final By saveAccountBy = By.id("save-account-btn");
+    private final By initialBalanceInput = By.id("initial-balance");
+    private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
+    private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
+    
+    private final Map<AccountType, By> accountTypeSelectOptions = Map.of(
+        AccountType.SAVINGS_ACCOUNT,  By.xpath("//*[@data-radix-select-viewport]//*[@data-radix-collection-item and contains(., 'Savings Account')]"),
+        AccountType.CHECKING_ACCOUNT, By.xpath("//*[@data-radix-select-viewport]//*[@data-radix-collection-item and contains(., 'Checking Account')]"),
+        AccountType.CREDIT_CARD,      By.xpath("//*[@data-radix-select-viewport]//*[@data-radix-collection-item and contains(., 'Credit Card')]")
+    );
 }
