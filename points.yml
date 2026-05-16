@@ -136,7 +136,7 @@ basic:
 # ----------------------------------------------------------
 advanced:
   webdriver_config:          # 4 pts | once
-    done: false
+    done: true
     description: "Configure WebDriver with custom options (e.g. ChromeOptions, window size, user agent)"
     link: "https://www.selenium.dev/documentation/webdriver/drivers/options/"
 
@@ -197,7 +197,7 @@ advanced:
     link: "https://www.browserstack.com/guide/take-screenshots-in-selenium"
     
   headless_execution:        # 4 pts | once
-    done: false
+    done: true
     description: "Run tests in headless mode (browser without visible UI)"
     link: "https://www.selenium.dev/documentation/webdriver/browsers/chrome/"
 

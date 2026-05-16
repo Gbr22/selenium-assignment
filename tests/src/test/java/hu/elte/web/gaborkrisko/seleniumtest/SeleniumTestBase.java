@@ -18,6 +18,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -48,6 +49,11 @@ public class SeleniumTestBase {
         this.config = new TestConfigFactory().createFromEnvironment();
         this.locators = new ElementLocators();
         ChromeOptions options = new ChromeOptions();
+        final var windowSize = new Dimension(960, 540);
+        options.addArguments("--user-agent=SeleniumAssignment/1.0");
+        options.addArguments("--headless=new");
+        options.addArguments("--window-size=%d,%d".formatted(windowSize.width, windowSize.height));
+
         final var driver = new RemoteWebDriver(new URL(config.getDriverURL()), options);
         this.javascriptExecutor = (JavascriptExecutor) driver;
         this.takesScreenshot = (TakesScreenshot) driver;

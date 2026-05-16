@@ -29,7 +29,7 @@ public class BankAccountTest extends SeleniumTestBase {
         return "%d.%s".formatted(whole, centsString);
     }
 
-    private static void fillAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
+    private static void submitAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
         final var locators = test.locators;
         test.wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountFormBy()));
         
@@ -57,10 +57,7 @@ public class BankAccountTest extends SeleniumTestBase {
         }
         assertEquals(parameters.getIsOverdraftProtectionEnabled(), Boolean.parseBoolean(enableOverdraftProtectionEl.getAttribute("aria-checked")));
         assertEquals(parameters.getIsOverdraftProtectionEnabled(), test.getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
-    }
-
-    private static void submitAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
-        BankAccountTest.fillAccountCreationForm(test, parameters);
+        
         test.waitAndReturnElement(test.locators.getSaveAccountBy()).click();
         ToastHelper.assertToastContains(test, ACCOUNT_CREATION_SUCCESS_MESSAGE);
     }

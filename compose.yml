@@ -1,6 +1,6 @@
 services:
   selenium:
-    image: selenium/standalone-chrome:latest
+    image: selenium/standalone-chrome:136.0-chromedriver-136.0-grid-4.43.0-20260404
     container_name: docker-sandbox-selenium
     shm_size: 2gb
     environment:
