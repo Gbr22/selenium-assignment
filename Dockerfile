@@ -10,7 +10,7 @@ ENV LC_ALL=C.UTF-8
 # Install Java
 RUN add-apt-repository ppa:openjdk-r/ppa && \
     apt-get update && \
-    apt-get install -y openjdk-8-jdk
+    apt-get install -y openjdk-17-jdk
 
 # Install Gradle
 ENV GRADLE_VERSION=7.4
@@ -21,7 +21,7 @@ RUN wget -q https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin
     ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
 # Set environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV GRADLE_HOME=/opt/gradle
 
 # Add Gradle and Java to PATH

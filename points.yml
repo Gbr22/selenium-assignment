@@ -98,7 +98,7 @@ basic:
     description: "Select or verify a radio button"
 
   at_least_4_classes:        # 3 pts | once
-    done: false
+    done: true
     description: "Project has at least 4 Java classes"
 
   at_least_6_classes:        # 3 pts | once
