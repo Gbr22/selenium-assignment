@@ -23,11 +23,16 @@ public class ElementLocators {
     private final By dashboardNavigationBy = By.id("nav-dashboard");
     private final By accountsNavigationBy = By.id("nav-accounts");
     private final By transactionsNavigationBy = By.id("nav-transactions");
+    private final By accountSearchInputBy = By.id("search-input");
+    private final By accountsTableBy = By.id("accounts-tbody");
+    private final By accountNameCellBy = By.xpath("//*[@id='accounts-tbody']//td[@data-testid='account-name']");
+    private final By deleteAccountBy = By.xpath("//*[@id='accounts-tbody']//*[@data-action='delete']");
+    private final By confirmDeleteActionBy = By.id("confirm-delete-btn");
     private final String pinnedAccountsXPathString = "//*[@id='pinned-accounts-drop-zone']";
     private final String pinnedAccountNameXPathString = "//*[@id='pinned-accounts-drop-zone']//*[@data-account-id]";
     private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
     private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
-    private final By enableOverdraftProtectionCheckbox = By.xpath("//*[@id='account-form']//*[@id='account-form-fields']//*[@data-testid='overdraft-checkbox' and @role='checkbox']");
+    private final By enableOverdraftProtectionCheckboxBy = By.xpath("//*[@id='account-form']//*[@id='account-form-fields']//*[@data-testid='overdraft-checkbox' and @role='checkbox']");
     private final String enableOverdraftProtectionHiddenInputXPathString = "//*[@id='account-form']//*[@id='account-form-fields']//input[@type='checkbox' and @name='enableOverdraft']";
     
     private final Map<Boolean, By> accountStatusRadioLabelsBy = Map.of(
