@@ -1,8 +1,14 @@
 package hu.elte.web.gaborkrisko.seleniumtest;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -10,8 +16,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -22,6 +31,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.gson.Gson;
 
 @TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith(ScreenshotTestWatcher.class)
 public class SeleniumTestBase {
     protected WebDriver driver;
     protected WebDriverWait wait;
@@ -29,6 +39,9 @@ public class SeleniumTestBase {
     protected TestConfig config;
     protected ElementLocators locators;
     protected JavascriptExecutor javascriptExecutor;
+    protected TakesScreenshot takesScreenshot;
+    private Path buildDir = Path.of(System.getProperty("build.dir"));
+    private Path screenshotsDir = buildDir.resolve("screenshots");
 
     @BeforeAll
     public void setup() throws MalformedURLException {
@@ -37,10 +50,10 @@ public class SeleniumTestBase {
         ChromeOptions options = new ChromeOptions();
         final var driver = new RemoteWebDriver(new URL(config.getDriverURL()), options);
         this.javascriptExecutor = (JavascriptExecutor) driver;
+        this.takesScreenshot = (TakesScreenshot) driver;
         this.driver = driver;
         this.driver.manage().window().maximize();
         this.wait = new WebDriverWait(driver, defaultTimeout);
-        
     }
 
     @BeforeEach
@@ -99,5 +112,18 @@ public class SeleniumTestBase {
             "window.dispatchEvent(new KeyboardEvent(%s, {key: %s}))"
             .formatted(asJsonString(eventType), asJsonString(key))
         );
+    }
+
+    protected void saveScreenshot() {
+        try {
+            final var screenshot = takesScreenshot.getScreenshotAs(OutputType.FILE);
+            Files.createDirectories(screenshotsDir);
+            String timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                .withZone(ZoneOffset.UTC)
+                .format(Instant.now());
+            Files.copy(screenshot.toPath(), screenshotsDir.resolve("%s.png".formatted(timestamp)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
