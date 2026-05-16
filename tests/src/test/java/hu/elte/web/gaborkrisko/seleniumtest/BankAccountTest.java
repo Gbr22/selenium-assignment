@@ -17,45 +17,66 @@ public class BankAccountTest extends SeleniumTestBase {
         return "%d.%s".formatted(whole, centsString);
     }
 
-    private void createAccount(String accountName, AccountType accountType, long balanceCents, boolean isActive, boolean enableOverdraftProtection) {
-        AuthTest.loginAdmin(this);
+    private void fillAccountCreationForm(AccountCreationParameters parameters) {
         final var addAccountEl = waitAndReturnElement(locators.getAddAccountBy());
         addAccountEl.sendKeys(Keys.ENTER);
         wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountFormBy()));
         
         final var accountNameEl = waitAndReturnElement(locators.getAccountNameInputBy());
-        accountNameEl.sendKeys(accountName);
+        accountNameEl.sendKeys(parameters.getAccountName());
         
         final var accountTypeBy = waitAndReturnElement(locators.getAccountTypeBy());
         accountTypeBy.click();
-        final var option = waitAndReturnElement(locators.getAccountTypeSelectOptions().get(accountType));
+        final var option = waitAndReturnElement(locators.getAccountTypeSelectOptions().get(parameters.getAccountType()));
         option.click();
 
         final var initialBalanceEl = waitAndReturnElement(locators.getInitialBalanceInputBy());
-        initialBalanceEl.sendKeys(formatBalance(balanceCents));
+        initialBalanceEl.sendKeys(formatBalance(parameters.getBalanceCents()));
 
-        final var isActiveRadioLabelToSelectBy = locators.getAccountStatusRadioLabelsBy().get(isActive);
-        final var isActiveRadioInputToSelectXPath = locators.getAccountStatusRadioHiddenInputsXPathString().get(isActive);
+        final var isActiveRadioLabelToSelectBy = locators.getAccountStatusRadioLabelsBy().get(parameters.getIsActive());
+        final var isActiveRadioInputToSelectXPath = locators.getAccountStatusRadioHiddenInputsXPathString().get(parameters.getIsActive());
         final var isActiveRadioToSelectEl = waitAndReturnElement(isActiveRadioLabelToSelectBy);
         isActiveRadioToSelectEl.click();
         final var isHiddenCheckboxInputSelected = getCheckedStateByXPath(isActiveRadioInputToSelectXPath);
         assertTrue(isHiddenCheckboxInputSelected);
 
         final var enableOverdraftProtectionEl = waitAndReturnElement(locators.getEnableOverdraftProtectionCheckbox());
-        if (enableOverdraftProtection) {
+        if (parameters.getIsOverdraftProtectionEnabled()) {
             enableOverdraftProtectionEl.click();
         }
-        assertEquals(enableOverdraftProtection, Boolean.parseBoolean(enableOverdraftProtectionEl.getAttribute("aria-checked")));
-        assertEquals(enableOverdraftProtection, getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
-        
-        final var saveAccount = waitAndReturnElement(locators.getSaveAccountBy());
-        saveAccount.click();
+        assertEquals(parameters.getIsOverdraftProtectionEnabled(), Boolean.parseBoolean(enableOverdraftProtectionEl.getAttribute("aria-checked")));
+        assertEquals(parameters.getIsOverdraftProtectionEnabled(), getCheckedStateByXPath(locators.getEnableOverdraftProtectionHiddenInputXPathString()));
+    }
 
+    private void submitAccountCreationForm(AccountCreationParameters parameters) {
+        fillAccountCreationForm(parameters);
+        waitAndReturnElement(locators.getSaveAccountBy()).click();
         assertTrue(ToastTest.getToastText(this).contains(ACCOUNT_CREATION_SUCCESS_MESSAGE), "Expected the toast message text to contain the account creation success message.");
     }
 
     @Test
     public void createAccountTest() {
-        createAccount("test", AccountType.CREDIT_CARD, 1234, false, true);
+        AuthTest.loginAdmin(this);
+        waitAndReturnElement(locators.getDashboardNavigationBy()).click();
+        submitAccountCreationForm(AccountCreationParameters.builder()
+            .accountName("via opener button")
+            .accountType(AccountType.CREDIT_CARD)
+            .balanceCents(1234L)
+            .isActive(false)
+            .isOverdraftProtectionEnabled(true)
+            .build());
+    }
+
+    @Test
+    public void openAccountCreationDialogWithKeyboardTest() {
+        AuthTest.loginAdmin(this);
+        dispatchKeyboardEvent("keydown", "N");
+        submitAccountCreationForm(AccountCreationParameters.builder()
+            .accountName("via keyboard")
+            .accountType(AccountType.SAVINGS_ACCOUNT)
+            .balanceCents(1234L)
+            .isActive(true)
+            .isOverdraftProtectionEnabled(false)
+            .build());
     }
 }

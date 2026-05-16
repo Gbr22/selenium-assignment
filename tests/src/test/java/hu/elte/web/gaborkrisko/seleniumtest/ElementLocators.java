@@ -20,6 +20,9 @@ public class ElementLocators {
     private final By accountTypeBy = By.id("account-type");
     private final By saveAccountBy = By.id("save-account-btn");
     private final By initialBalanceInputBy = By.id("initial-balance");
+    private final By dashboardNavigationBy = By.id("nav-dashboard");
+    private final By accountsNavigationBy = By.id("nav-accounts");
+    private final By transactionsNavigationBy = By.id("nav-transactions");
     private final By toastItemBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]");
     private final By toastItemTitleBy = By.xpath("//*[@data-sonner-toaster='true']//*[@data-sonner-toast]//*[@data-content]//*[@data-title]");
     private final By enableOverdraftProtectionCheckbox = By.xpath("//*[@id='account-form']//*[@id='account-form-fields']//*[@data-testid='overdraft-checkbox' and @role='checkbox']");
