@@ -53,7 +53,7 @@ public class BasePage {
         this.locators = new ElementLocators();
         ChromeOptions options = new ChromeOptions();
         
-        if (config.getIsHeadless() != false) {
+        if (config.getIsHeadless() == null || config.getIsHeadless() == true) {
             options.addArguments("--headless=new");
         }
         if (config.getUserAgent() != null) {
