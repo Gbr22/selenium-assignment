@@ -11,7 +11,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class DashboardTest extends SeleniumTestBase {
+public class DashboardPage extends BasePage {
+    private static final String PAGE_TITLE = "Bank Dashboard – SecureBank Demo | QA Playground";
+
     private List<WebElement> getPinnedAccounts() {
         return getElementsByXPath(locators.getPinnedAccountNameXPathString());
     }
@@ -24,9 +26,9 @@ public class DashboardTest extends SeleniumTestBase {
 
     @Test
     public void pinnedAccountsDragAndDropTest() {
-        AuthTest.loginAdmin(this);
+        LoginPage.loginAdmin(this);
         List.of("one", "two", "three").forEach(name->{
-            BankAccountTest.createAccount(this, AccountCreationParameters.builder()
+            AccountsPage.createAccount(this, AccountCreationParameters.builder()
                 .accountName(name)
                 .accountType(AccountType.CHECKING_ACCOUNT)
                 .balanceCents(1234L)
@@ -47,5 +49,12 @@ public class DashboardTest extends SeleniumTestBase {
             ()->assertEquals(oldAccountIds.get(1), newAccountIds.get(0)),
             ()->assertEquals(oldAccountIds.get(2), newAccountIds.get(1))
         );
+    }
+
+    @Test
+    public void checkPageTitleTest() {
+        LoginPage.loginAdmin(this);
+        waitAndReturnElement(locators.getDashboardNavigationBy()).click();
+        waitUntilTitle(PAGE_TITLE);
     }
 }

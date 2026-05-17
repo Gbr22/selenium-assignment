@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.TestWatcher;
 public class ScreenshotTestWatcher implements TestWatcher {
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
-        SeleniumTestBase test = (SeleniumTestBase) context.getRequiredTestInstance();
+        BasePage test = (BasePage) context.getRequiredTestInstance();
         test.saveScreenshot();
     }    
 }

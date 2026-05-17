@@ -1,5 +1,7 @@
 package hu.elte.web.gaborkrisko.seleniumtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,6 +12,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +36,7 @@ import com.google.gson.Gson;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(ScreenshotTestWatcher.class)
-public class SeleniumTestBase {
+public class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected Duration defaultTimeout = Duration.ofSeconds(10);
@@ -75,6 +78,11 @@ public class SeleniumTestBase {
         if (this.driver != null) {
             this.driver.quit();
         }
+    }
+
+    protected void waitUntilTitle(String title) {
+        wait.until(d->Objects.equals(title, driver.getTitle()));
+        assertEquals(title, driver.getTitle());
     }
 
     protected WebElement waitAndReturnElement(By locator) {

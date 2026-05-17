@@ -18,9 +18,10 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import com.github.javafaker.Faker;
 
-public class BankAccountTest extends SeleniumTestBase {
+public class AccountsPage extends BasePage {
     private final static String ACCOUNT_CREATION_SUCCESS_MESSAGE = "Account created successfully!";
     private final static String ACCOUNT_DELETION_SUCCESS_MESSAGE = "Account deleted successfully.";
+    private final static String PAGE_TITLE = "Manage Accounts – Bank Demo E2E Practice | QA Playground";
 
     private static String formatBalance(long balanceCents) {
         long whole = balanceCents / 100;
@@ -29,7 +30,7 @@ public class BankAccountTest extends SeleniumTestBase {
         return "%d.%s".formatted(whole, centsString);
     }
 
-    private static void submitAccountCreationForm(SeleniumTestBase test, AccountCreationParameters parameters) {
+    private static void submitAccountCreationForm(BasePage test, AccountCreationParameters parameters) {
         final var locators = test.locators;
         test.wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountFormBy()));
         
@@ -62,17 +63,18 @@ public class BankAccountTest extends SeleniumTestBase {
         ToastHelper.assertToastContains(test, ACCOUNT_CREATION_SUCCESS_MESSAGE);
     }
 
-    public static void createAccount(SeleniumTestBase test, AccountCreationParameters parameters) {
+    public static void createAccount(BasePage test, AccountCreationParameters parameters) {
         test.waitAndReturnElement(test.locators.getDashboardNavigationBy()).click();
         final var addAccountEl = test.waitAndReturnElement(test.locators.getAddAccountBy());
+        
         addAccountEl.sendKeys(Keys.ENTER);
-        BankAccountTest.submitAccountCreationForm(test, parameters);
+        AccountsPage.submitAccountCreationForm(test, parameters);
     }
 
     @Test
     public void createAccountTest() {
-        AuthTest.loginAdmin(this);
-        BankAccountTest.createAccount(this, AccountCreationParameters.builder()
+        LoginPage.loginAdmin(this);
+        AccountsPage.createAccount(this, AccountCreationParameters.builder()
             .accountName("via opener button")
             .accountType(AccountType.CREDIT_CARD)
             .balanceCents(1234L)
@@ -83,11 +85,11 @@ public class BankAccountTest extends SeleniumTestBase {
 
     @Test
     public void openAccountCreationDialogWithKeyboardTest() {
-        AuthTest.loginAdmin(this);
+        LoginPage.loginAdmin(this);
         waitAndReturnElement(locators.getAccountsNavigationBy()).click();
         this.wait.until(ExpectedConditions.visibilityOfElementLocated(locators.getAccountsTableBy()));
         dispatchKeyboardEvent("keydown", "N");
-        BankAccountTest.submitAccountCreationForm(this, AccountCreationParameters.builder()
+        AccountsPage.submitAccountCreationForm(this, AccountCreationParameters.builder()
             .accountName("via keyboard")
             .accountType(AccountType.SAVINGS_ACCOUNT)
             .balanceCents(1234L)
@@ -116,11 +118,18 @@ public class BankAccountTest extends SeleniumTestBase {
         }
     }
 
+    @Test
+    public void checkPageTitleTest() {
+        LoginPage.loginAdmin(this);
+        waitAndReturnElement(locators.getAccountsNavigationBy()).click();
+        waitUntilTitle(PAGE_TITLE);
+    }
+
     @ParameterizedTest
     @ArgumentsSource(AccountParametersProvider.class)
     public void createAndDeleteAccountTest(AccountCreationParameters parameters) {
-        AuthTest.loginAdmin(this);
-        BankAccountTest.createAccount(this, parameters);
+        LoginPage.loginAdmin(this);
+        AccountsPage.createAccount(this, parameters);
         waitAndReturnElement(locators.getAccountsNavigationBy()).click();
         final var searchEl = waitAndReturnElement(locators.getAccountSearchInputBy());
         searchEl.sendKeys(parameters.getAccountName());
