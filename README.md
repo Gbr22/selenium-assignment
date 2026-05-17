@@ -2,7 +2,7 @@
 
 To run the tests do the following:
 1. Create a file called `.env` based on `example.env`. To find the admin login, visit https://qaplayground.com/bank and copy it from the Demo Credentials table, the admin user will be the one with "Full Access" role. The `docker-sandbox-ubuntu` container will obtain the environmental variables from this file. If you change the contents of `.env` the container will have to be recreated (not restarted!) for the change to apply.
-2. Make sure that `./tests` is owned by 1000:1000
+2. Make sure that `./tests` and the contents therein are owned by 1000:1000, otherwise gradle will have permission issues.
     * To check the ownership: `ls -lan ./tests`
     * To change the ownership: `sudo chown -R 1000:1000 ./tests`.
 3. Run `docker compose up -d` to start the containers.
