@@ -8,6 +8,8 @@ import org.openqa.selenium.support.ui.*;
 
 public class LoginPage extends BasePage {
     private final String LOGOUT_ALERT_MESSAGE = "Are you sure you want to logout?";
+    private final String APP_TITLE = "SecureBank Demo";
+    private final String APP_SUBTITLE = "Automation Testing Practice Application";
     private final static String PAGE_TITLE = "QA Playground: Practice Automation Testing with Selenium";
 
     public static void submitLogin(BasePage test, String username, String password) {
@@ -48,5 +50,12 @@ public class LoginPage extends BasePage {
     public void checkPageTitleTest() {
         driver.get(config.getLoginURL());
         waitUntilTitle(PAGE_TITLE);
+    }
+
+    @Test
+    public void checkPageContentTest() {
+        driver.get(config.getLoginURL());
+        assertEquals(APP_TITLE, waitAndReturnElement(locators.getAppTitleBy()).getText());
+        assertEquals(APP_SUBTITLE, waitAndReturnElement(locators.getAppSubtitleBy()).getText());
     }
 }

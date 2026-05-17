@@ -73,7 +73,7 @@ basic:
     description: "Submit a form (each distinct form counts as one)"
 
   static_page_test:          # 2 pts | once
-    done: false
+    done: true
     description: "Test a static page (verify text content, element presence, etc.)"
 
   multiple_page_test:        # 3 pts | once

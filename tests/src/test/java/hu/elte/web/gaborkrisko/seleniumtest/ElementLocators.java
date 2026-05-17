@@ -25,6 +25,8 @@ public class ElementLocators {
     private final By transactionsNavigationBy = By.id("nav-transactions");
     private final By accountSearchInputBy = By.id("search-input");
     private final By accountsTableBy = By.id("accounts-tbody");
+    private final By appTitleBy = By.id("app-title");
+    private final By appSubtitleBy = By.id("app-subtitle");
     private final By accountNameCellBy = By.xpath("//*[@id='accounts-tbody']//td[@data-testid='account-name']");
     private final By deleteAccountBy = By.xpath("//*[@id='accounts-tbody']//*[@data-action='delete']");
     private final By confirmDeleteActionBy = By.id("confirm-delete-btn");
