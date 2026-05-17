@@ -52,10 +52,16 @@ public class BasePage {
         this.config = new TestConfigFactory().createFromEnvironment();
         this.locators = new ElementLocators();
         ChromeOptions options = new ChromeOptions();
-        final var windowSize = new Dimension(960, 540);
-        options.addArguments("--user-agent=SeleniumAssignment/1.0");
-        options.addArguments("--headless=new");
-        options.addArguments("--window-size=%d,%d".formatted(windowSize.width, windowSize.height));
+        
+        if (config.getIsHeadless() != false) {
+            options.addArguments("--headless=new");
+        }
+        if (config.getUserAgent() != null) {
+            options.addArguments("--user-agent=%s".formatted(config.getUserAgent()));
+        }
+        if (config.getWindowSize() != null) {
+            options.addArguments("--window-size=%d,%d".formatted(config.getWindowSize().width, config.getWindowSize().height));
+        }
 
         final var driver = new RemoteWebDriver(new URL(config.getDriverURL()), options);
         this.javascriptExecutor = (JavascriptExecutor) driver;
